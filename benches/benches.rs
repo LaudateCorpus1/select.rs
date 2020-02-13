@@ -2,14 +2,9 @@
 
 extern crate test;
 
-extern crate html5ever;
-
-extern crate select;
-
 pub use select::document::Document;
 pub use select::predicate::*;
 
-extern crate speculate;
 use speculate::speculate;
 
 speculate! {
@@ -19,8 +14,9 @@ speculate! {
         }
 
         bench "constructing html5ever::rcdom::RcDom" |b| {{
-            use html5ever::{parse_document, rcdom};
+            use html5ever::parse_document;
             use html5ever::tendril::stream::TendrilSink;
+            use markup5ever_rcdom as rcdom;
 
             b.iter(|| {
                 let rc_dom = parse_document(rcdom::RcDom::default(),

@@ -1,8 +1,8 @@
 use html5ever::tendril::{ByteTendril, ReadExt, StrTendril};
 
-use node::{self, Node};
-use predicate::Predicate;
-use selection::Selection;
+use crate::node::{self, Node};
+use crate::predicate::Predicate;
+use crate::selection::Selection;
 
 use std::io;
 
@@ -30,7 +30,7 @@ impl Document {
 
     pub fn from_read<R: io::Read>(mut readable: R) -> io::Result<Document> {
         let mut byte_tendril = ByteTendril::new();
-        try!(readable.read_to_tendril(&mut byte_tendril));
+        readable.read_to_tendril(&mut byte_tendril)?;
 
         match byte_tendril.try_reinterpret() {
             Ok(str_tendril) => Ok(Document::from(str_tendril)),
@@ -45,8 +45,9 @@ impl Document {
 impl From<StrTendril> for Document {
     /// Parses the given `StrTendril` into a `Document`.
     fn from(tendril: StrTendril) -> Document {
+        use html5ever::parse_document;
         use html5ever::tendril::stream::TendrilSink;
-        use html5ever::{parse_document, rcdom};
+        use markup5ever_rcdom as rcdom;
 
         let mut document = Document { nodes: vec![] };
 

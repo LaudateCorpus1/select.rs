@@ -3,9 +3,9 @@ use std::{fmt, io};
 use html5ever::tendril::StrTendril;
 use html5ever::{serialize, LocalName, QualName};
 
-use document::Document;
-use predicate::Predicate;
-use selection::Selection;
+use crate::document::Document;
+use crate::predicate::Predicate;
+use crate::selection::Selection;
 
 /// The Node type specific data stored by every Node.
 #[derive(Clone, Debug, PartialEq)]
@@ -254,17 +254,13 @@ impl<'a> serialize::Serialize for Node<'a> {
             Data::Element(ref name, ref attrs) => {
                 let attrs = attrs.iter().map(|&(ref name, ref value)| (name, &**value));
 
-                try!(serializer.start_elem(name.clone(), attrs));
+                serializer.start_elem(name.clone(), attrs)?;
 
                 for child in self.children() {
-                    try!(serialize::Serialize::serialize(
-                        &child,
-                        serializer,
-                        traversal_scope.clone()
-                    ));
+                    serialize::Serialize::serialize(&child, serializer, traversal_scope.clone())?;
                 }
 
-                try!(serializer.end_elem(name.clone()));
+                serializer.end_elem(name.clone())?;
 
                 Ok(())
             }
